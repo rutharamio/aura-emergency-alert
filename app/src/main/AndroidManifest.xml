@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos necesarios para el módulo de emergencia -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Permiso recomendado para servicios en primer plano -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -28,5 +36,32 @@
         <!-- Pantalla para ver la lista de contactos -->
         <activity android:name=".ui.ContactListActivity" />
 
+        <!-- Activity para solicitar permisos (Sofi) -->
+        <activity
+            android:name=".ui.PermissionActivity"
+            android:exported="false" />
+
+        <!-- Receiver que detecta el botón de encendido (Sofi) -->
+        <receiver
+            android:name=".receivers.PowerButtonReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Servicio en primer plano para emergencias (Sofi) -->
+        <service
+            android:name=".services.EmergencyService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <!-- Clave de Google Maps (Ana la agregará más adelante) -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="TU_API_KEY_AQUI" />
+
     </application>
+
 </manifest>
