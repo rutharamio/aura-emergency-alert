@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.secrets.gradle.plugin)
 }
 
 android {
     namespace = "com.example.aura"
-    compileSdk = 34
+    compileSdk = 36
     //36 aun no es estable y se configura con 36 por defecto parece
 
     defaultConfig {
         applicationId = "com.example.aura"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = 29
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
