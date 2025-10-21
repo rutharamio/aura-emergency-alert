@@ -11,15 +11,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Aura">
+
+        <!-- Pantalla principal -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <!-- Pantalla para agregar contactos -->
+        <activity android:name=".ui.AddContactActivity" />
+
+        <!-- Pantalla para ver la lista de contactos -->
+        <activity android:name=".ui.ContactListActivity" />
+
+    </application>
 </manifest>
