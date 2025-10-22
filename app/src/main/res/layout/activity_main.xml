@@ -1,19 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F5F5F5"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Aura — Contactos SOS"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"
+        android:textColor="#333" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/btnAddContact"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="➕ Agregar contacto"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnViewContacts"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="📋 Ver contactos"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnEmergency"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="🚨 Módulo de emergencia" />
+
+</LinearLayout>
