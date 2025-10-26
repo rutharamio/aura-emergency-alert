@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos necesarios -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,11 +16,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Aura">
+        android:theme="@style/Theme.Aura"
+        tools:targetApi="31">
 
-        <!-- Pantalla principal -->
+        <!-- Pantalla de inicio (Splash) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,11 +29,25 @@
             </intent-filter>
         </activity>
 
-        <!-- Pantalla para agregar contactos -->
-        <activity android:name=".ui.AddContactActivity" />
+        <!-- Pantalla de Login -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
 
-        <!-- Pantalla para ver la lista de contactos -->
-        <activity android:name=".ui.ContactListActivity" />
+        <!-- Pantalla principal -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+
+        <!-- Pantalla para agregar contactos -->
+        <activity
+            android:name=".ui.AddContactActivity"
+            android:exported="false" />
+
+        <!-- Pantalla para ver lista de contactos -->
+        <activity
+            android:name=".ui.ContactListActivity"
+            android:exported="false" />
 
     </application>
 </manifest>

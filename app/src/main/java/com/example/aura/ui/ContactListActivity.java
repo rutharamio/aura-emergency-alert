@@ -4,21 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.aura.data.AppDatabaseSingleton;
+import com.example.aura.data.SessionManager;
 import com.example.aura.data.entities.Contact;
 import com.example.aura.databinding.ActivityContactListBinding;
 import com.example.aura.ui.adapters.ContactAdapter;
+
 import java.util.List;
 
 public class ContactListActivity extends AppCompatActivity {
 
     private ActivityContactListBinding binding;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityContactListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sessionManager = new SessionManager(this);
 
         updateList();
 
@@ -36,7 +42,10 @@ public class ContactListActivity extends AppCompatActivity {
 
     private void updateList() {
         var db = AppDatabaseSingleton.getInstance(this);
-        List<Contact> contactList = db.contactDao().getAllContacts();
+        int userId = sessionManager.getUserId(); // 🔹 usuario actual logueado
+
+        // 🔹 Obtener solo contactos del usuario actual
+        List<Contact> contactList = db.contactDao().getContactsForUser(userId);
 
         binding.recyclerContacts.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerContacts.setAdapter(new ContactAdapter(contactList, this));

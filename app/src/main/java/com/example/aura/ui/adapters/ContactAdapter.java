@@ -38,11 +38,20 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Contact contact = contactList.get(position);
+
         holder.tvName.setText(contact.name);
         holder.tvPhone.setText(contact.phone);
         holder.tvRelation.setText(contact.relation);
 
-        // Mantener presionado para eliminar contacto
+        // 🔹 Mostrar prioridad si existe (opcional)
+        if (contact.priority != null && !contact.priority.isEmpty()) {
+            holder.tvPriority.setVisibility(View.VISIBLE);
+            holder.tvPriority.setText("Prioridad: " + contact.priority);
+        } else {
+            holder.tvPriority.setVisibility(View.GONE);
+        }
+
+        // 🔹 Eliminar contacto con confirmación
         holder.itemView.setOnLongClickListener(v -> {
             new AlertDialog.Builder(context)
                     .setTitle("Eliminar contacto")
@@ -65,13 +74,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvPhone, tvRelation;
+        TextView tvName, tvPhone, tvRelation, tvPriority;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvPhone = itemView.findViewById(R.id.tvPhone);
             tvRelation = itemView.findViewById(R.id.tvRelation);
+            tvPriority = itemView.findViewById(R.id.tvPriority); // 🔹 asegúrate de tener este TextView en tu XML
         }
     }
 }

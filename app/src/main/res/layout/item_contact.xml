@@ -84,4 +84,15 @@
             android:textSize="14sp" />
     </LinearLayout>
 
+    <!-- Prioridad -->
+    <TextView
+        android:id="@+id/tvPriority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prioridad: Alta"
+        android:textColor="#AA0000"
+        android:textStyle="italic"
+        android:textSize="13sp"
+        android:layout_marginTop="6dp"
+        android:visibility="gone" />
 </LinearLayout>

@@ -14,14 +14,14 @@ public interface ContactDao {
     @Insert
     void insert(Contact contact);
 
-    @Query("SELECT * FROM contacts")
-    List<Contact> getAllContacts();
+    // 🔹 Obtener todos los contactos de un usuario específico
+    @Query("SELECT * FROM contacts WHERE user_id = :userId")
+    List<Contact> getContactsForUser(int userId);
 
     @Delete
     void delete(Contact contact);
 
-    @Query("SELECT * FROM contacts WHERE priority = '1' OR priority = 'Alta' ORDER BY id ASC LIMIT 3")
-    List<Contact> getContactsForAlert();
-
-
+    // 🔹 Obtener solo los contactos con prioridad alta de ese usuario
+    @Query("SELECT * FROM contacts WHERE (priority = '1' OR priority = 'Alta') AND user_id = :userId ORDER BY id ASC LIMIT 3")
+    List<Contact> getContactsForAlert(int userId);
 }

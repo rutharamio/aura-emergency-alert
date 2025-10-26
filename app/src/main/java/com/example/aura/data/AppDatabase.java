@@ -8,7 +8,7 @@ import com.example.aura.data.dao.UserDao;
 import com.example.aura.data.entities.Contact;
 import com.example.aura.data.entities.User;
 
-@Database(entities = {Contact.class, User.class}, version = 1, exportSchema = false)
+@Database(entities = {Contact.class, User.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract ContactDao contactDao();
     public abstract UserDao userDao();
