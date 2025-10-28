@@ -28,7 +28,7 @@ public class EmergencyService extends Service {
 
         startForeground(1, notification);
         createChannel();
-        Log.d(TAG, "onCreate");
+        Log.d(TAG, "Servicio de emergencia iniciado en onCreate");
     }
 
     private void createChannel() {
@@ -57,6 +57,8 @@ public class EmergencyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: iniciando foreground");
+        Log.d(TAG, "Servicio de emergencia iniciado en onStartCommand"); // <- PONÉ ESTO
+
         startForeground(NOTIF_ID, buildNotification());
 
         // TODO: arrancar tracking de ubicación o lógica de alerta
