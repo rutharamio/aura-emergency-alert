@@ -46,8 +46,8 @@ public class EmergencyService extends Service {
 
     private Notification buildNotification() {
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Aura - Servicio activo")
-                .setContentText("Monitor de emergencia en segundo plano")
+                .setContentTitle("Emergencia activada")
+                .setContentText("Servicio en primer plano activo")
                 .setSmallIcon(android.R.drawable.ic_dialog_alert) // poné tu propio icono si tenés
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
