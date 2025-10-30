@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.aura"
-    compileSdk = 34 // ✅ Usa 34 (estable y compatible con Maps y Room)
+    compileSdk = 36 // ✅ Usa 34 (estable y compatible con Maps y Room)
 
     defaultConfig {
         applicationId = "com.example.aura"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 

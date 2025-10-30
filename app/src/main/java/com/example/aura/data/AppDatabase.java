@@ -7,19 +7,22 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.aura.data.dao.ContactDao;
+import com.example.aura.data.dao.ReportDao;
+import com.example.aura.data.dao.UserDao;
 import com.example.aura.data.entities.Contact;
-import com.example.aura.ReportDao;
-import com.example.aura.ReportEntity;
+import com.example.aura.data.entities.ReportEntity;
+import com.example.aura.data.entities.User;
 
 /**
  * Base de datos unificada de Aura.
  * Contiene:
- *  - Contactos de emergencia (Ruth)
- *  - Reportes de zonas inseguras (Ana)
+ *  - Usuarios del sistema
+ *  - Contactos de emergencia
+ *  - Reportes de zonas inseguras
  */
 @Database(
-        entities = {Contact.class, ReportEntity.class},
-        version = 2,
+        entities = {Contact.class, ReportEntity.class, User.class},
+        version = 3, // incrementamos la versión por el cambio en el esquema
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -27,6 +30,7 @@ public abstract class AppDatabase extends RoomDatabase {
     // DAOs de cada módulo
     public abstract ContactDao contactDao();
     public abstract ReportDao reportDao();
+    public abstract UserDao userDao(); // Añadimos el DAO de usuario
 
     // Singleton para acceder a la DB
     private static volatile AppDatabase INSTANCE;

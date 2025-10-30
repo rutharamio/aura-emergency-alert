@@ -1,8 +1,10 @@
-package com.example.aura.data;
+package com.example.aura.data.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.example.aura.data.entities.ReportEntity;
 
 import java.util.List;
 

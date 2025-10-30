@@ -1,4 +1,4 @@
-package com.example.aura.data;
+package com.example.aura.data.entities;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

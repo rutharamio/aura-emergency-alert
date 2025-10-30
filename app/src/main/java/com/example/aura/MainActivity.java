@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aura.databinding.ActivityMainBinding;
+// No necesitarás RegisterActivity aquí, pero no hace daño dejarlo.
+import com.example.aura.ui.RegisterActivity;
 import com.example.aura.ui.AddContactActivity;
 import com.example.aura.ui.ContactListActivity;
 import com.example.aura.utils.HaversineUtils;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap gmap;
     private FusedLocationProviderClient fused;
     private static final int REQ_LOCATION = 1001;
+
+    // ... (El resto de tus variables y métodos de reportes no cambian) ...
 
     // ===== Reportes simulados =====
     private static class Report {
@@ -61,12 +65,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         android.util.Log.d("REPORTS", "Cercanos dibujados: " + count);
     }
 
+
     // ===== onCreate =====
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // ===================== BLOQUE A ELIMINAR =====================
+        /*
+        // ✅ Verifica si el usuario ya tiene perfil guardado
+        if (!com.example.aura.core.Prefs.isUserLoggedIn(getApplicationContext())){
+            // Si no tiene perfil → ir a pantalla de registro
+            startActivity(new Intent(this, RegisterActivity.class));
+            finish();
+            return;
+        }
+        */
+        // =================== FIN DEL BLOQUE ELIMINADO ==================
+
+        // Ahora, esta actividad simplemente carga su layout sin ninguna condición.
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
         // Botones del menú principal (tu parte)
         binding.btnAddContact.setOnClickListener(v ->
@@ -75,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding.btnViewContacts.setOnClickListener(v ->
                 startActivity(new Intent(this, ContactListActivity.class)));
 
-        binding.btnEmergencyModule.setOnClickListener(v ->
-                Toast.makeText(this, "Módulo de emergencia (Sofi)", Toast.LENGTH_SHORT).show());
+//        binding.btnEmergencyModule.setOnClickListener(v ->
+//                Toast.makeText(this, "Módulo de emergencia (Sofi)", Toast.LENGTH_SHORT).show());
 
         // Configuración del mapa (Ana)
         SupportMapFragment mapFragment =
@@ -94,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    // ... (El resto de tus métodos: onMapReady, onRequestPermissionsResult, etc., se quedan igual) ...
     // ===== Mapa listo =====
     @Override
     public void onMapReady(GoogleMap googleMap) {
