@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- Pe<uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />rmiso recomendado para servicios en primer plano -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
 
 
@@ -52,8 +55,8 @@
         <service
             android:name=".services.EmergencyService"
             android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="location" /> <!-- Clave de Google Maps (Ana la agregará más adelante) -->
+            android:exported="false"
+            android:foregroundServiceType="location|dataSync"/><!-- Clave de Google Maps (Ana la agregará más adelante) -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="TU_API_KEY_AQUI" />
