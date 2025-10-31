@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.aura.core.Prefs;
 import com.example.aura.databinding.ActivityMainBinding;
 // No necesitarás RegisterActivity aquí, pero no hace daño dejarlo.
 import com.example.aura.ui.RegisterActivity;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import android.util.Log;
@@ -96,14 +98,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("test_connection");
 
-        ref.setValue("Firebase OK ✅")
+        ref.setValue("Firebase OK")
                 .addOnSuccessListener(aVoid -> {
                     Log.d("FirebaseTest", "✅ Conexión exitosa con Firebase");
-                    Toast.makeText(this, "Conectado a Firebase ✅", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Conectado a Firebase", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("FirebaseTest", "❌ Error al conectar con Firebase", e);
-                    Toast.makeText(this, "Error al conectar con Firebase ❌", Toast.LENGTH_SHORT).show();
+                    Log.e("FirebaseTest", "Error al conectar con Firebase", e);
+                    Toast.makeText(this, "Error al conectar con Firebase", Toast.LENGTH_SHORT).show();
                 });
 // =======================================================================
 
@@ -150,6 +152,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         gmap.setOnMapLongClickListener(this::showCreateReportDialog);
 
         enableMyLocationIfGranted();
+        loadReportsFromFirebase();
+
     }
 
     // ===== Permisos =====
@@ -226,12 +230,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (severity == 2) hue = BitmapDescriptorFactory.HUE_ORANGE;
         if (severity == 3) hue = BitmapDescriptorFactory.HUE_RED;
 
+        // 1. Mostrar el marcador localmente
         gmap.addMarker(new MarkerOptions()
                 .position(pos)
                 .title(comment)
                 .snippet("Riesgo: " + severity)
                 .icon(BitmapDescriptorFactory.defaultMarker(hue)));
 
-        Toast.makeText(this, "Reporte creado", Toast.LENGTH_SHORT).show();
+        // 2. Subir a Firebase
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference reportsRef = db.getReference("reports");
+
+        String reportId = reportsRef.push().getKey(); // genera ID único
+        if (reportId != null) {
+            ReportData report = new ReportData(
+                    pos.latitude,
+                    pos.longitude,
+                    comment,
+                    severity,
+                    String.valueOf(Prefs.getLoggedInUserId(this))
+            );
+
+            reportsRef.child(reportId).setValue(report)
+                    .addOnSuccessListener(aVoid ->
+                            Toast.makeText(this, "Reporte guardado.", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Error al guardar reporte.", Toast.LENGTH_SHORT).show());
+        }
     }
+
+    private void loadReportsFromFirebase() {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference reportsRef = db.getReference("reports");
+
+        reportsRef.get().addOnSuccessListener(snapshot -> {
+            for (DataSnapshot child : snapshot.getChildren()) {
+                ReportData r = child.getValue(ReportData.class);
+                if (r != null) {
+                    float hue = BitmapDescriptorFactory.HUE_YELLOW;
+                    if (r.severity == 2) hue = BitmapDescriptorFactory.HUE_ORANGE;
+                    if (r.severity == 3) hue = BitmapDescriptorFactory.HUE_RED;
+
+                    LatLng pos = new LatLng(r.lat, r.lon);
+                    gmap.addMarker(new MarkerOptions()
+                            .position(pos)
+                            .title(r.comment)
+                            .snippet("Riesgo: " + r.severity)
+                            .icon(BitmapDescriptorFactory.defaultMarker(hue)));
+                }
+            }
+        }).addOnFailureListener(e ->
+                Log.e("FirebaseLoad", "Error cargando reportes", e));
+    }
+
+
 }
