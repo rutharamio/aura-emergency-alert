@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#1F1F1F">
+    android:padding="12dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/bg_contact_item">
 
+    <!-- Nombre -->
     <TextView
         android:id="@+id/tvName"
         android:layout_width="match_parent"
@@ -13,20 +16,24 @@
         android:text="Nombre"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@android:color/white"/>
+        android:textColor="#6C63FF" /> <!-- Violeta principal Aura -->
 
+    <!-- Teléfono -->
     <TextView
         android:id="@+id/tvPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Teléfono"
-        android:textColor="@android:color/darker_gray"/>
+        android:textSize="14sp"
+        android:textColor="#555555" /> <!-- Gris medio -->
 
+    <!-- Relación -->
     <TextView
         android:id="@+id/tvRelation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Relación"
-        android:textColor="@android:color/darker_gray"/>
+        android:textSize="14sp"
+        android:textColor="#777777" /> <!-- Gris claro -->
 
 </LinearLayout>

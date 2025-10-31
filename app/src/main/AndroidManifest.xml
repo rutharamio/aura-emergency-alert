@@ -2,12 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permisos necesarios para el módulo de emergencia -->
+    <!-- 🔐 Permisos necesarios (sin cambios) -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Permiso recomendado para servicios en primer plano -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -20,9 +19,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Aura">
 
-        <!-- Pantalla principal -->
+        <!-- 🔑 Clave de Google Maps (sin cambios) -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <!-- 🚀 Pantalla de bienvenida, ahora es el punto de entrada -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,18 +34,34 @@
             </intent-filter>
         </activity>
 
-        <!-- Pantalla para agregar contactos -->
-        <activity android:name=".ui.AddContactActivity" />
+        <!-- 🗺️ Pantalla principal del mapa -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
-        <!-- Pantalla para ver la lista de contactos -->
-        <activity android:name=".ui.ContactListActivity" />
+        <!-- ===================== LÍNEA AÑADIDA AQUÍ ===================== -->
 
-        <!-- Activity para solicitar permisos (Sofi) -->
+        <!-- 🔑 Pantalla de inicio de sesión -->
+        <activity android:name=".ui.LoginActivity" android:exported="false" />
+
+        <!-- ============================================================= -->
+
+        <!-- 📝 Pantalla de registro -->
+        <activity android:name=".ui.RegisterActivity" android:exported="false" />
+
+        <!-- 📇 Módulo de contactos -->
+        <activity android:name=".ui.AddContactActivity" android:exported="false" />
+        <activity android:name=".ui.ContactListActivity" android:exported="false" />
+
+        <!-- 🧭 Mapa (si Ana mantiene una Activity separada, opcional) -->
+        <activity android:name=".MapActivity" android:exported="false" />
+
+        <!-- ⚙️ Solicitud de permisos (Sofi) -->
         <activity
             android:name=".ui.PermissionActivity"
             android:exported="false" />
 
-        <!-- Receiver que detecta el botón de encendido (Sofi) -->
+        <!-- ⚡ Receiver del botón de encendido (Sofi) -->
         <receiver
             android:name=".receivers.PowerButtonReceiver"
             android:exported="false">
@@ -51,17 +71,11 @@
             </intent-filter>
         </receiver>
 
-        <!-- Servicio en primer plano para emergencias (Sofi) -->
+        <!-- 🆘 Servicio de emergencia (Sofi) -->
         <service
             android:name=".services.EmergencyService"
             android:exported="false"
             android:foregroundServiceType="location" />
 
-        <!-- Clave de Google Maps (Ana la agregará más adelante) -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="TU_API_KEY_AQUI" />
-
     </application>
-
 </manifest>

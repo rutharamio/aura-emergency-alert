@@ -5,11 +5,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import com.example.aura.data.AppDatabase;
 import com.example.aura.data.entities.Contact;
 import com.example.aura.databinding.ActivityAddContactBinding;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AddContactActivity extends AppCompatActivity {
 
@@ -22,12 +24,8 @@ public class AddContactActivity extends AppCompatActivity {
         binding = ActivityAddContactBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // 🧱 Crear o abrir la base de datos Room
-        db = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "contactdata")
-                .allowMainThreadQueries() // solo para pruebas
-                .fallbackToDestructiveMigration() // fuerza recreación si hay cambios
-                .build();
+        // ✅ Usar la instancia Singleton correcta de la base de datos
+        db = AppDatabase.getInstance(this);
 
         binding.saveButton.setOnClickListener(v -> {
             String name = binding.nameInput.getText().toString();
@@ -40,27 +38,31 @@ public class AddContactActivity extends AppCompatActivity {
                 return;
             }
 
-            try {
-                Contact contact = new Contact();
-                contact.name = name;
-                contact.phone = phone;
-                contact.relation = relation;
-                contact.priority = priority;
+            // ✅ Ejecutar la inserción en un hilo secundario
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                try {
+                    Contact contact = new Contact();
+                    contact.name = name;
+                    contact.phone = phone;
+                    contact.relation = relation;
+                    contact.priority = priority;
 
-                db.contactDao().insert(contact);
+                    db.contactDao().insert(contact);
 
-                // 🔍 Verificar si se insertó correctamente
-                int total = db.contactDao().getAllContacts().size();
-                Log.d("ROOM_TEST", "✅ Contacto insertado: " + name);
-                Log.d("ROOM_TEST", "👥 Total de contactos en DB: " + total);
+                    // Volver al hilo principal para mostrar el Toast y cerrar la actividad
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Contacto guardado correctamente", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
 
-                Toast.makeText(this, "Contacto guardado correctamente", Toast.LENGTH_SHORT).show();
-                finish();
-
-            } catch (Exception e) {
-                Log.e("ROOM_ERROR", "❌ Error al insertar contacto: " + e.getMessage());
-                Toast.makeText(this, "Error al guardar contacto", Toast.LENGTH_SHORT).show();
-            }
+                } catch (Exception e) {
+                    Log.e("ROOM_ERROR", "❌ Error al insertar contacto: " + e.getMessage());
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Error al guardar contacto", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
         });
     }
 }

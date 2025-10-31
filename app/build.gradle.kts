@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.secrets.gradle.plugin)
+    id("com.google.gms.google-services") // ✅ Añadí esta línea
 }
 
 android {
@@ -8,11 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "com.example.aura"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = 29
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -25,6 +26,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -33,7 +35,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
 }
 
 dependencies {
@@ -45,7 +46,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    // ROOM (base de datos local)
+    // ROOM
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
 
@@ -53,4 +54,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")
 
+    // FIREBASE
+    implementation("com.google.firebase:firebase-database:21.0.0")
 }
+apply(plugin = "com.google.gms.google-services")
+

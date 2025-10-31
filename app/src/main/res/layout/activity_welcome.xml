@@ -1,0 +1,79 @@
+<!-- En res/layout/activity_welcome.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    tools:context=".ui.WelcomeActivity">
+
+    <!-- LOGO -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:src="@drawable/aura_logo"
+        android:contentDescription="Logo de Aura" />
+
+    <!-- TÍTULO -->
+    <TextView
+        android:id="@+id/textTitleAura"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AURA"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/white" />
+
+    <!-- SUBTÍTULO -->
+    <TextView
+        android:id="@+id/textSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tu seguridad en tus manos."
+        android:textSize="18sp"
+        android:textColor="#E0E0E0"
+        android:layout_marginTop="8dp" />
+
+    <!-- ESPACIADO -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <!-- TEXTO DE PREGUNTA -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Ya tienes una cuenta?"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:layout_marginBottom="12dp" />
+
+    <!-- BOTÓN LOGIN -->
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Sesión"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/white"
+        android:textColor="#6C63FF"
+        android:elevation="4dp" />
+
+    <!-- BOTÓN REGISTRO -->
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Registrarse"
+        android:layout_marginTop="12dp"
+        style="?attr/materialButtonOutlinedStyle"
+        android:textColor="@color/white"
+        android:strokeColor="@color/white"
+        android:strokeWidth="1" />
+
+</LinearLayout>
