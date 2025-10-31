@@ -28,6 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import android.util.Log;
+
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ActivityMainBinding binding;
@@ -86,6 +91,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Ahora, esta actividad simplemente carga su layout sin ninguna condición.
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // ==================== PRUEBA DE CONEXIÓN A FIREBASE ====================
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("test_connection");
+
+        ref.setValue("Firebase OK ✅")
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("FirebaseTest", "✅ Conexión exitosa con Firebase");
+                    Toast.makeText(this, "Conectado a Firebase ✅", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirebaseTest", "❌ Error al conectar con Firebase", e);
+                    Toast.makeText(this, "Error al conectar con Firebase ❌", Toast.LENGTH_SHORT).show();
+                });
+// =======================================================================
 
 
         // Botones del menú principal (tu parte)
