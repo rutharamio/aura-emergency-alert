@@ -16,7 +16,7 @@ public class PowerButtonReceiver extends BroadcastReceiver {
     private static int powerEventCount = 0;
 
     // Ventana de tiempo para detectar el patrón
-    private static final long WINDOW_MS = 5000; // 2 segundos
+    private static final long WINDOW_MS = 2000; // 2 segundos
     private static final Handler handler = new Handler();
     private static final Runnable resetCounter = () -> {
         Log.d(TAG, "⏱️ Se reinició el contador");
@@ -53,5 +53,3 @@ public class PowerButtonReceiver extends BroadcastReceiver {
         }
     }
 }
-
-
