@@ -31,7 +31,7 @@ import java.util.concurrent.Executors;
 
 public class EmergencyService extends Service {
 
-    public static final String TAG = "EmergencyService";
+    public static final String TAG = "EmergencyService"; // Este es el TAG que usaremos para filtrar en Logcat
     public static final String CHANNEL_ID = "aura_emergency_channel";
     private static final int NOTIF_ID = 1001;
 
@@ -66,7 +66,7 @@ public class EmergencyService extends Service {
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setSmallIcon(R.drawable.ic_alert) // Usa tu icono si tenés uno propio
+                .setSmallIcon(R.drawable.ic_alert)
                 .setOngoing(true)
                 .build();
     }
@@ -98,6 +98,9 @@ public class EmergencyService extends Service {
                     lat = location.getLatitude();
                     lon = location.getLongitude();
                     gotLocation = true;
+                    Log.d(TAG, "Ubicación obtenida: " + lat + ", " + lon);
+                } else {
+                    Log.w(TAG, "No se pudo obtener la ubicación.");
                 }
 
                 final double finalLat = lat;
@@ -110,15 +113,18 @@ public class EmergencyService extends Service {
     }
 
     private void sendAlertToAllContacts(double lat, double lon, boolean gotLocation) {
+        Log.d(TAG, "Iniciando proceso sendAlertToAllContacts..."); // Log de inicio
         AppDatabase db = AppDatabase.getInstance(this);
         List<Contact> contacts = db.contactDao().getAllContacts();
 
         if (contacts == null || contacts.isEmpty()) {
-            Log.w(TAG, "No hay contactos de emergencia guardados.");
+            Log.w(TAG, "¡PROBLEMA! No se encontraron contactos de emergencia en la base de datos.");
             updateNotification("Sin contactos", "No se enviaron mensajes.");
             stopSelf();
             return;
         }
+
+        Log.d(TAG, "Contactos encontrados en la BD: " + contacts.size());
 
         String nombreUsuario = Prefs.getLoggedInUserName(this);
         if (nombreUsuario.isEmpty()) nombreUsuario = "Un usuario de Aura";
@@ -130,6 +136,8 @@ public class EmergencyService extends Service {
                 : "🚨 ¡ALERTA DE EMERGENCIA! " + nombreUsuario +
                 " necesita ayuda, pero no se pudo obtener su ubicación.";
 
+        Log.d(TAG, "Mensaje a enviar: " + mensaje);
+
         SmsManager smsManager = SmsManager.getDefault();
         int enviados = 0;
 
@@ -137,24 +145,45 @@ public class EmergencyService extends Service {
             String phone = c.phone;
             if (phone == null || phone.isEmpty()) continue;
 
+            phone = phone.trim().replaceAll("\\s+", "");
+            if (phone.startsWith("0") && !phone.startsWith("+595")) {
+                phone = "+595" + phone.substring(1);
+            }
+
+            // ================== LOGS DE DEPURACIÓN AÑADIDOS AQUÍ ==================
+
+            Log.d(TAG, "--------------------------------------------------");
+            Log.d(TAG, "Procesando contacto: " + c.name + " | Número: " + phone);
+
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS)
                     != PackageManager.PERMISSION_GRANTED) {
-                Log.e(TAG, "Permiso SEND_SMS no concedido.");
-                continue;
+                // Este log es crucial. Si lo ves, el problema es el permiso.
+                Log.e(TAG, "¡FALLO CRÍTICO! Permiso SEND_SMS no concedido. Imposible enviar.");
+                updateNotification("Permiso Requerido", "Acepta el permiso de SMS.");
+                // No continuamos, detenemos el proceso aquí para que el error sea obvio.
+                stopSelf();
+                return;
             }
 
             try {
+                Log.d(TAG, "✅ Permiso concedido. Intentando enviar SMS a " + phone + "...");
                 smsManager.sendTextMessage(phone, null, mensaje, null, null);
                 enviados++;
-                Log.d(TAG, "SMS enviado a " + phone);
+                Log.i(TAG, "✅✅ ¡SMS puesto en cola para ser enviado a " + phone + "!");
             } catch (Exception e) {
-                Log.e(TAG, "Error al enviar SMS a " + phone, e);
+                // Si hay una excepción, la veremos aquí.
+                Log.e(TAG, "❌❌ ¡ERROR EXCEPCIÓN! Fallo al enviar SMS a " + phone, e);
             }
+            Log.d(TAG, "--------------------------------------------------");
         }
 
-        updateNotification("Alerta enviada", "Mensajes enviados a " + enviados + " contacto(s).");
+
+        Log.i(TAG, "Proceso de envío finalizado. Total de mensajes intentados: " + enviados);
+        updateNotification("Alerta enviada", "Mensajes enviados a " + enviados + " de " + contacts.size() + " contacto(s).");
         stopSelf();
     }
+
+    // ... (El resto de tu clase se queda igual) ...
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

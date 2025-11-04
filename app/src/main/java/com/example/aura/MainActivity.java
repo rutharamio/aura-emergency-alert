@@ -2,15 +2,18 @@ package com.example.aura;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Button;
+import android.content.pm.PackageManager; // IMPORT NECESARIO
+import android.os.Bundle;import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat; // IMPORT NECESARIO
+import androidx.core.content.ContextCompat;
 
 import com.example.aura.core.Prefs;
 import com.example.aura.databinding.ActivityMainBinding;
+import com.example.aura.services.EmergencyService; // IMPORT NECESARIO
 import com.example.aura.services.PowerButtonService;
 import com.example.aura.ui.AddContactActivity;
 import com.example.aura.ui.ContactListActivity;
@@ -31,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import android.util.Log;
 
+import java.util.ArrayList; // IMPORT NECESARIO
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActivityMainBinding binding;
     private GoogleMap gmap;
     private FusedLocationProviderClient fused;
-    private static final int REQ_LOCATION = 1001;
+    private static final int REQ_LOCATION_AND_SMS = 101; // Cambiamos el nombre para que sea más claro
 
     private Button btnEmergency;
 
@@ -51,9 +55,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Iniciar servicio de detección de botón Power
-        Intent powerService = new Intent(this, PowerButtonService.class);
-        startService(powerService);
+        // ================== SOLUCIÓN AÑADIDA AQUÍ (PARTE 1) ==================
+        // Llamamos al método para solicitar permisos al iniciar la actividad
+        solicitarPermisosNecesarios();
+        // =====================================================================
 
         // ==================== PRUEBA DE CONEXIÓN A FIREBASE ====================
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -62,11 +67,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ref.setValue("Firebase OK")
                 .addOnSuccessListener(aVoid -> {
                     Log.d("FirebaseTest", "Conexión exitosa con Firebase");
-                    Toast.makeText(this, "Conectado a Firebase", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(this, "Conectado a Firebase", Toast.LENGTH_SHORT).show(); // Opcional, lo comento para no molestar
                 })
                 .addOnFailureListener(e -> {
                     Log.e("FirebaseTest", "Error al conectar con Firebase", e);
-                    Toast.makeText(this, "Error al conectar con Firebase", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(this, "Error al conectar con Firebase", Toast.LENGTH_SHORT).show(); // Opcional
                 });
         // =======================================================================
 
@@ -77,10 +82,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding.btnViewContacts.setOnClickListener(v ->
                 startActivity(new Intent(this, ContactListActivity.class)));
 
-        // Botón emergencia
+        // Botón emergencia (Tu código ya está correcto aquí)
         btnEmergency = findViewById(R.id.btnEmergency);
-        btnEmergency.setOnClickListener(v ->
-                startActivity(new Intent(this, EmergencyModuleActivity.class)));
+        btnEmergency.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Confirmar Emergencia")
+                    .setMessage("¿Estás seguro de que deseas enviar una alerta de emergencia a tus contactos?")
+                    .setPositiveButton("SÍ, ENVIAR ALERTA", (dialog, which) -> {
+                        Intent serviceIntent = new Intent(this, EmergencyService.class);
+                        ContextCompat.startForegroundService(this, serviceIntent);
+                        Toast.makeText(this, "Activando módulo de emergencia...", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("CANCELAR", null)
+                    .show();
+        });
+
 
         // Configuración del mapa
         SupportMapFragment mapFragment =
@@ -108,29 +124,59 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         LatLng asuncion = new LatLng(-25.281, -57.635);
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(asuncion, 13f));
-        showNearbyReports(asuncion);
+        // showNearbyReports(asuncion); // Comentado para no mezclar con los de Firebase
 
         gmap.setOnMapLongClickListener(this::showCreateReportDialog);
 
-        enableMyLocationIfGranted();
+        enableMyLocationIfGranted(); // Este método ahora depende del nuevo sistema de permisos
         loadReportsFromFirebase();
     }
 
+    // ================== SOLUCIÓN AÑADIDA AQUÍ (PARTE 2) ==================
+    // La definición del método va junto a los otros métodos de permisos.
+
     // ===== Permisos =====
+
+    private void solicitarPermisosNecesarios() {
+        // Lista de permisos peligrosos que la app necesita para funcionar al 100%
+        String[] permisos = {
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.SEND_SMS
+        };
+
+        // Filtramos la lista para pedir solo los que aún no han sido concedidos
+        List<String> permisosPorPedir = new ArrayList<>();
+        for (String permiso : permisos) {
+            if (ContextCompat.checkSelfPermission(this, permiso) != PackageManager.PERMISSION_GRANTED) {
+                permisosPorPedir.add(permiso);
+            }
+        }
+
+        // Si hay permisos sin conceder, se los pedimos al usuario
+        if (!permisosPorPedir.isEmpty()) {
+            Log.d("Permissions", "Pidiendo permisos al usuario...");
+            ActivityCompat.requestPermissions(
+                    this,
+                    permisosPorPedir.toArray(new String[0]),
+                    REQ_LOCATION_AND_SMS // Usamos nuestro código de solicitud
+            );
+        }
+    }
+
+
     @SuppressLint("MissingPermission")
     private void enableMyLocationIfGranted() {
         if (gmap == null) return;
-        if (androidx.core.content.ContextCompat.checkSelfPermission(
+        // Solo verificamos el permiso de ubicación aquí, el de SMS no es necesario para el mapa
+        if (ContextCompat.checkSelfPermission(
                 this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED) {
             gmap.setMyLocationEnabled(true);
             fetchLastLocationAndCenter();
         } else {
-            androidx.core.app.ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQ_LOCATION
-            );
+            // Si el permiso no está, la función solicitarPermisosNecesarios() ya lo pidió.
+            // O podemos ser más insistentes y pedirlo de nuevo si es crucial para esta acción.
+            Log.d("Permissions", "Permiso de ubicación no concedido aún.");
         }
     }
 
@@ -139,12 +185,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_LOCATION && grantResults.length > 0
-                && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            enableMyLocationIfGranted();
+
+        if (requestCode == REQ_LOCATION_AND_SMS) {
+            // Revisamos los resultados de nuestra solicitud de permisos
+            if (grantResults.length > 0) {
+                for (int i = 0; i < permissions.length; i++) {
+                    if (permissions[i].equals(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                            && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Permissions", "Permiso de UBICACIÓN concedido.");
+                        // Si se concedió el permiso de ubicación, intentamos activar la capa del mapa
+                        enableMyLocationIfGranted();
+                    }
+                    if (permissions[i].equals(android.Manifest.permission.SEND_SMS)
+                            && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Permissions", "Permiso de SMS concedido.");
+                        // No se necesita una acción inmediata, pero el servicio ya podrá usarlo.
+                    }
+                }
+            }
         }
     }
 
+    // El resto de tus métodos (fetchLastLocationAndCenter, showNearbyReports, etc.) se quedan igual
+    // ...
+    // [COPIA Y PEGA EL RESTO DE TUS MÉTODOS DESDE AQUÍ]
+    // ...
     @SuppressLint("MissingPermission")
     private void fetchLastLocationAndCenter() {
         if (androidx.core.content.ContextCompat.checkSelfPermission(
