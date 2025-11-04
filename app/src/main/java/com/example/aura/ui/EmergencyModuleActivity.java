@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.widget.Button;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -19,6 +21,7 @@ public class EmergencyModuleActivity extends AppCompatActivity {
 
     private static final int REQUEST_LOCATION_PERMISSION = 100;
     private static final int REQUEST_SMS_PERMISSION = 200;
+    private static final String TAG = "EmergencyModule";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +34,27 @@ public class EmergencyModuleActivity extends AppCompatActivity {
         }
 
         Button btnStartService = findViewById(R.id.btnStartService);
-        btnStartService.setOnClickListener(v -> {
-            Log.d("EmergencyModule", "Botón presionado → solicitando permisos");
-            solicitarPermisos();
-        });
+        btnStartService.setOnClickListener(v -> mostrarDialogoConfirmacion());
     }
 
+    /** 🔔 Muestra el diálogo de confirmación antes de enviar la alerta */
+    private void mostrarDialogoConfirmacion() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar Alerta de Emergencia")
+                .setMessage("¿Estás seguro de que deseas enviar tu ubicación a tus contactos de confianza?")
+                .setPositiveButton("SÍ, ENVIAR ALERTA", (dialog, which) -> {
+                    Log.d(TAG, "Usuario confirmó la alerta 🚨");
+                    solicitarPermisos();
+                })
+                .setNegativeButton("CANCELAR", (dialog, which) -> {
+                    dialog.dismiss();
+                    Toast.makeText(this, "Alerta cancelada", Toast.LENGTH_SHORT).show();
+                })
+                .setCancelable(true)
+                .show();
+    }
+
+    /** 📍 Verifica permisos antes de iniciar el servicio */
     private void solicitarPermisos() {
         boolean ubicacionOk = ContextCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -62,10 +80,17 @@ public class EmergencyModuleActivity extends AppCompatActivity {
         iniciarServicioEmergencia();
     }
 
+    /** 🚨 Inicia el servicio de emergencia en primer plano */
     private void iniciarServicioEmergencia() {
-        Log.d("EmergencyModule", "Permisos concedidos ✅ → Iniciando servicio");
-        Intent serviceIntent = new Intent(this, EmergencyService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
+        Log.d(TAG, "Permisos concedidos ✅ → Iniciando servicio");
+        try {
+            Intent serviceIntent = new Intent(this, EmergencyService.class);
+            ContextCompat.startForegroundService(this, serviceIntent);
+            Toast.makeText(this, "🚨 Alerta enviada a tus contactos", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Log.e(TAG, "Error al iniciar el servicio de emergencia", e);
+            Toast.makeText(this, "Error al iniciar el servicio", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -77,7 +102,8 @@ public class EmergencyModuleActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 solicitarPermisos();
             } else {
-                Log.e("EmergencyModule", "Permiso de ubicación DENEGADO ❌");
+                Log.e(TAG, "Permiso de ubicación DENEGADO ❌");
+                Toast.makeText(this, "Se necesita permiso de ubicación para enviar la alerta", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -85,9 +111,9 @@ public class EmergencyModuleActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 solicitarPermisos();
             } else {
-                Log.e("EmergencyModule", "Permiso de SMS DENEGADO ❌");
+                Log.e(TAG, "Permiso de SMS DENEGADO ❌");
+                Toast.makeText(this, "Se necesita permiso de SMS para enviar la alerta", Toast.LENGTH_SHORT).show();
             }
         }
     }
 }
-

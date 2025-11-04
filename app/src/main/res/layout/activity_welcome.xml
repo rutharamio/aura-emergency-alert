@@ -7,7 +7,8 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    tools:context=".ui.WelcomeActivity">
+    tools:context=".ui.WelcomeActivity"
+    android:background="@drawable/bg_welcome">
 
     <!-- LOGO -->
     <ImageView

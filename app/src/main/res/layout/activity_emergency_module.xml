@@ -3,26 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@drawable/bg_welcome"
     tools:context=".ui.EmergencyModuleActivity">
+
+    <TextView
+        android:id="@+id/titleSOS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SOS"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnStartService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enviar alerta a mis contactos"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#6C63FF"
+        android:padding="12dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="18dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🚨 Módulo de emergencia"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#333" />
-
-    <!-- Botón para iniciar el servicio -->
-    <Button
-        android:id="@+id/btnStartService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Iniciar Servicio de Emergencia"
-        android:layout_marginTop="20dp" />
+        android:text="Tu ubicación será enviada automáticamente a tus contactos de confianza."
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:paddingHorizontal="20dp" />
 
 </LinearLayout>
-

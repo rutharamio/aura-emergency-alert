@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         ref.setValue("Firebase OK")
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("FirebaseTest", "✅ Conexión exitosa con Firebase");
+                    Log.d("FirebaseTest", "Conexión exitosa con Firebase");
                     Toast.makeText(this, "Conectado a Firebase", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
