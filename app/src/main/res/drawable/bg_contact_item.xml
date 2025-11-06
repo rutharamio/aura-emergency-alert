@@ -1,0 +1,26 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Color blanco ligeramente translúcido para no ser tan plano -->
+    <solid android:color="#FDFDFD" />
+
+    <!-- Esquinas redondeadas -->
+    <corners android:radius="12dp" />
+
+    <!-- Sombra ligera para efecto de flotación -->
+    <padding
+        android:left="12dp"
+        android:top="8dp"
+        android:right="12dp"
+        android:bottom="8dp" />
+
+    <size
+        android:width="0dp"
+        android:height="0dp" />
+
+    <!-- Bordes muy suaves para dar definición -->
+    <stroke
+        android:width="0.6dp"
+        android:color="#22000000" />
+
+</shape>
