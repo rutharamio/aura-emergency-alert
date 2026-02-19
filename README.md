@@ -1,16 +1,15 @@
-# Aura – Emergency Alert App
+# Aura – Android Personal Safety System
 
-Android safety application that allows users to trigger a panic alert and notify emergency contacts with real-time location.
+Aura is a Java-based Android application designed to provide discreet emergency activation, contact management and unsafe zone visualization.
 
-The system implements:
-- Foreground Service for continuous emergency monitoring
-- BroadcastReceiver for hardware button trigger
-- Hybrid persistence using Room (local) and Firebase Realtime Database (cloud)
-- Google Maps integration for location visualization
-- Runtime permission management
+The system integrates:
+- Room Database (local persistence)
+- Google Maps SDK & Location Services
+- Foreground Emergency Service
+- Session management via SharedPreferences
+- Firebase Realtime Database (hybrid integration)
 
-## Tech Stack
-- Java (Android)
-- Firebase Realtime Database
-- Room (SQLite)
-- Google Maps SDK
+Architecture:
+Layered design separating UI, business logic and persistence.
+
+Developed under Agile-Lite methodology with feature branches and controlled merges.
